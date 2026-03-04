@@ -8,22 +8,38 @@ public class Calculator {
     public static void calculator(Scanner scanner, List<Double> history){
         double firstNum;
         double secondNum;
-        char op;
+        char op, choice = ' ';
         double result = 0.0;
 
         while(true){
             System.out.println("=== Java 계산기 ===");
 
-            // 첫 번째 수 입력
-            System.out.print("첫 번째 숫자를 입력하세요: ");
-            // 숫자가 아닌 경우 입력 처리
-            try{
-                firstNum = scanner.nextInt();
-            } catch (InputMismatchException e){
-                System.out.println("숫자를 입력해주세요.");
-                scanner.nextLine(); // 버퍼 비우기
-                continue;
+            if(!history.isEmpty()){ // 이전 결과 사용 여부
+                System.out.print("이전 결과("+String.format("%.1f", history.getLast())+")를 사용하시겠습니까? (y/n):");
+                choice = scanner.next().charAt(0);
+                if(choice != 'y' && choice != 'Y' && choice != 'n' && choice != 'N'){
+                    System.out.println("y 또는 n만 입력해주세요.");
+                    scanner.nextLine();
+                    continue;
+                }
             }
+
+            // 첫 번째 수 입력
+            if(choice != 'y' && choice != 'Y'){ // 이전 결과가 존재하지 않거나 / n을 선택한 경우
+                System.out.print("첫 번째 숫자를 입력하세요: ");
+                // 숫자가 아닌 경우 입력 처리
+                try{
+                    firstNum = scanner.nextInt();
+                } catch (InputMismatchException e){
+                    System.out.println("숫자를 입력해주세요.");
+                    scanner.nextLine(); // 버퍼 비우기
+                    continue;
+                }
+            }
+            else{ // 이전 결과를 사용하는 경우
+                firstNum = history.getLast();
+            }
+
 
 
             // 연산자 입력
@@ -79,9 +95,10 @@ public class Calculator {
                 else if(repeat == 'y' || repeat == 'Y')
                     break;
                     // 입력 오류
-                else
+                else{
                     System.out.println("y 또는 n만 입력해주세요.");
-
+                    scanner.nextLine();
+                }
             }
         }
     }
