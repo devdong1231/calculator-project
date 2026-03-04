@@ -20,7 +20,7 @@ public class Calculator {
                 firstNum = scanner.nextInt();
             } catch (InputMismatchException e){
                 System.out.println("숫자를 입력해주세요.");
-                scanner.nextLine();
+                scanner.nextLine(); // 버퍼 비우기
                 continue;
             }
 
@@ -31,9 +31,10 @@ public class Calculator {
             try{
                 op = scanner.next().charAt(0);
                 if(op != '+' && op != '-' && op != '*' && op != '/')
-                    throw new Exception("지원하지 않는 연산자입니다.");
-            } catch(Exception e){
+                    throw new IllegalArgumentException("지원하지 않는 연산자입니다.");
+            } catch(IllegalArgumentException e){
                 System.out.println(e.getMessage());
+                scanner.nextLine(); // 버퍼 비우기
                 continue;
             }
 
@@ -48,11 +49,8 @@ public class Calculator {
                 continue;
             }
             // divisionByZero 처리
-            try{
-                if(op == '/' && secondNum == 0)
-                    throw new Exception("0으로 나눌 수 없습니다.");
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
+            if(op == '/' && secondNum == 0){
+                System.out.println("0으로 나눌 수 없습니다.");
                 continue;
             }
 
@@ -64,13 +62,31 @@ public class Calculator {
                 case '/' -> firstNum / secondNum;
                 default -> result;
             };
-            System.out.println("결과: " + String.format("%.1f", firstNum) + " " + op + " " + String.format("%.1f", secondNum) + " = " + result);
-            break;
+            System.out.println("결과: " + String.format("%.1f", firstNum) + " " + op + " " + String.format("%.1f", secondNum) + " = " + result + "\n");
+
+            // 계속/종료 선택 기능
+            while(true){
+                System.out.print("계속 계산하시겠습니까? (y/n): ");
+                char repeat = scanner.next().charAt(0);
+                // n / N의 경우
+                if(repeat == 'n' || repeat == 'N'){
+                    System.out.println("계산기를 종료합니다.");
+                    scanner.close();
+                    return;
+                }
+                // y / Y의 경우
+                else if(repeat == 'y' || repeat == 'Y')
+                    break;
+                // 입력 오류
+                else
+                    System.out.println("y 또는 n만 입력해주세요.");
+
+            }
+
         }
 
 
-        System.out.println("계산기를 종료합니다.");
-        scanner.close();
+
     }
 
 }
