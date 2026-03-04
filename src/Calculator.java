@@ -1,10 +1,11 @@
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public class Calculator {
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+    public static void calculator(Scanner scanner, List<Double> history){
         double firstNum;
         double secondNum;
         char op;
@@ -62,6 +63,7 @@ public class Calculator {
                 case '/' -> firstNum / secondNum;
                 default -> result;
             };
+            history.add(result);
             System.out.println("결과: " + String.format("%.1f", firstNum) + " " + op + " " + String.format("%.1f", secondNum) + " = " + result + "\n");
 
             // 계속/종료 선택 기능
@@ -71,22 +73,47 @@ public class Calculator {
                 // n / N의 경우
                 if(repeat == 'n' || repeat == 'N'){
                     System.out.println("계산기를 종료합니다.");
-                    scanner.close();
                     return;
                 }
                 // y / Y의 경우
                 else if(repeat == 'y' || repeat == 'Y')
                     break;
-                // 입력 오류
+                    // 입력 오류
                 else
                     System.out.println("y 또는 n만 입력해주세요.");
 
             }
-
         }
+    }
 
+    public static void showHistory(List<Double> history){
+        for(int i = 0; i < history.size(); i++){
+            System.out.println((i+1) + " 번째 계산 결과: " + history.get(i));
+        }
+    }
 
+    public static void deleteHistory(List<Double> history){
+        history.clear();
+    }
 
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        List<Double> history = new ArrayList<>();
+
+        while(true){
+            System.out.println("=== 계산기 메뉴 ===");
+            System.out.println("1. 계산하기\n2. 계산 이력 보기\n3. 이력 지우기\n0. 종료");
+            System.out.print("선택: ");
+            int choice = scanner.nextInt();
+            switch (choice){
+                case 0: scanner.close(); return; // 종료
+                case 1: calculator(scanner, history); break; // 계산하기
+                case 2: showHistory(history); break; // 계산 이력 보기
+                case 3: deleteHistory(history); break; // 이력 지우기
+                default: // 잘못된 입력 처리
+                    System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
+            }
+        }
     }
 
 }
