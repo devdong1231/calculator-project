@@ -8,7 +8,8 @@ public class Calculator {
     public static void calculator(Scanner scanner, List<Double> history){
         double firstNum;
         double secondNum;
-        char op, choice = ' ';
+        String op;
+        char choice = ' ';
         double result = 0.0;
 
         while(true){
@@ -43,44 +44,51 @@ public class Calculator {
 
 
             // 연산자 입력
-            System.out.print("연산자를 입력하세요 (+, -, *, /): ");
+            System.out.print("연산자를 입력하세요 (+, -, *, /, %, ^, sqrt): ");
             // 잘못된 연산자 입력 처리
             try{
-                op = scanner.next().charAt(0);
-                if(op != '+' && op != '-' && op != '*' && op != '/')
+                op = scanner.next();
+                if(!(op.equals("+") || op.equals("-") || op.equals("*") || op.equals("/") || op.equals("%") || op.equals("^") || op.equals("sqrt")))
                     throw new IllegalArgumentException("지원하지 않는 연산자입니다.");
             } catch(IllegalArgumentException e){
                 System.out.println(e.getMessage());
                 scanner.nextLine(); // 버퍼 비우기
                 continue;
             }
-
-            // 두 번째 수 입력
-            System.out.print("두 번째 숫자를 입력하세요: ");
-            // 숫자가 아닌 경우 입력 처리
-            try{
-                secondNum = scanner.nextInt();
-            } catch (InputMismatchException e){
-                System.out.println("숫자를 입력해주세요.");
-                scanner.nextLine();
-                continue;
+            if(op.equals("sqrt")){
+                result = Math.sqrt(firstNum);
+                System.out.println("결과: " + String.format("%.1f", firstNum) + "의 제곱근은 " + result + "입니다.");
             }
-            // divisionByZero 처리
-            if(op == '/' && secondNum == 0){
-                System.out.println("0으로 나눌 수 없습니다.");
-                continue;
-            }
+            else{
+                // 두 번째 수 입력
+                System.out.print("두 번째 숫자를 입력하세요: ");
+                // 숫자가 아닌 경우 입력 처리
+                try{
+                    secondNum = scanner.nextInt();
+                } catch (InputMismatchException e){
+                    System.out.println("숫자를 입력해주세요.");
+                    scanner.nextLine();
+                    continue;
+                }
+                // divisionByZero 처리
+                if(op.equals("/") && secondNum == 0){
+                    System.out.println("0으로 나눌 수 없습니다.");
+                    continue;
+                }
 
-            //결과 출력
-            result = switch (op) {
-                case '+' -> firstNum + secondNum;
-                case '-' -> firstNum - secondNum;
-                case '*' -> firstNum * secondNum;
-                case '/' -> firstNum / secondNum;
-                default -> result;
-            };
+                //결과 출력
+                result = switch (op) {
+                    case "+" -> firstNum + secondNum;
+                    case "-" -> firstNum - secondNum;
+                    case "*" -> firstNum * secondNum;
+                    case "/" -> firstNum / secondNum;
+                    case "%" -> firstNum % secondNum;
+                    case "^" -> Math.pow(firstNum, secondNum);
+                    default -> result;
+                };
+                System.out.println("결과: " + String.format("%.1f", firstNum) + " " + op + " " + String.format("%.1f", secondNum) + " = " + result + "\n");
+            }
             history.add(result);
-            System.out.println("결과: " + String.format("%.1f", firstNum) + " " + op + " " + String.format("%.1f", secondNum) + " = " + result + "\n");
 
             // 계속/종료 선택 기능
             while(true){
@@ -105,7 +113,7 @@ public class Calculator {
 
     public static void showHistory(List<Double> history){
         for(int i = 0; i < history.size(); i++){
-            System.out.println((i+1) + " 번째 계산 결과: " + history.get(i));
+            System.out.println((i+1) + "번째 계산 결과: " + history.get(i));
         }
     }
 
